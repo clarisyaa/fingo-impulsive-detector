@@ -1,0 +1,20 @@
+Kolom,Tipe,Satuan,Deskripsi
+timestamp,datetime64[ns],-,Waktu transaksi. Dataset tanpa HH:MM menggunakan default 12:00.
+amount,float64,IDR,Nilai nominal transaksi dalam Rupiah. Sudah dikonversi dari USD/INR.
+category,object,-,"Kategori transaksi (8 standar GigFlow): Makanan, Transportasi, Hiburan, Belanja, Pendidikan, Kesehatan, Tagihan, Lainnya."
+source,object,-,Asal data: kaggle_personal_finance | kaggle_daily_transactions | kaggle_ecommerce_id | synthetic_fingo.
+hour,int64,jam (0–23),Jam transaksi diekstrak dari timestamp.
+hour_sin,float64,"[-1, 1]",sin(2π × hour / 24). Encoding siklus agar jam 23 dan jam 0 berdekatan.
+hour_cos,float64,"[-1, 1]",cos(2π × hour / 24). Encoding siklus jam.
+day_of_week,int64,0=Senin…6=Minggu,Hari dalam minggu diekstrak dari timestamp.
+is_weekend,int64,0/1,1 jika hari Sabtu (5) atau Minggu (6).
+is_night,int64,0/1,1 jika jam transaksi ≥20 atau ≤3 (rentang malam 20:00–03:59).
+night_score,float64,"[0, 1]","Skor malam gradual. 1.0 = tengah malam (jam 0), 0.0 = siang (jam 12)."
+category_score,float64,0/0.5/1,"1.0=hedonic (Hiburan, Belanja), 0.5=neutral, 0.0=utilitarian (Pendidikan, Kesehatan, Tagihan)."
+amount_z,float64,"[-3, 3]","Z-score nilai transaksi per sumber data, di-clamp ke [-3, 3]."
+amount_score,float64,"[0, 1]","amount_z dinormalisasi ke [0, 1] dengan formula (z + 3) / 6."
+amount_vs_weekly_avg,float64,"[0, 5]","Rasio amount terhadap rata-rata pengeluaran mingguan user. Di-clamp ke [0, 5]."
+budget_remaining_ratio,float64,"[0.05, 1]","Estimasi sisa budget: 1.0 = awal bulan, 0.05 = akhir bulan."
+impulsive_score,float64,"[0, 100]",Skor impulsif hasil weighted sum: 0.35×night + 0.30×category + 0.25×amount + 0.10×weekend.
+label,object,-,"Label klasifikasi: IMPULSIF (≥P90), PERTIMBANGAN (P70–P90), AMAN (<P70)."
+is_impulsive,int64,0/1,"1 jika label==IMPULSIF, 0 selainnya. Digunakan sebagai target biner oleh AI Engineer."
